@@ -1,0 +1,12 @@
+{
+  "subscribers": [
+    "src/subscriber/**/*.ts"
+  ],
+  "migrations": [
+    "src/database/migrations/**/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/database/migrations",
+    "subscribersDir": "src/subscriber"
+ }
+}
