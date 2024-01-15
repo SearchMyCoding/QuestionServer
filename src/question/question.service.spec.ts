@@ -41,7 +41,7 @@ describe('QuestionsService', () => {
       id : 1,
       questionType : 'EI',
       contents : '한 달 동안 공부, 프로젝트에 매진해 있어서 제대로 쉰 날이 하루도 없다... <br/>가까스로 다 끝낸 뒤 나는?',
-      activate : true,
+      isActivate : true,
       answer : []
     };
   });
@@ -109,7 +109,7 @@ describe('QuestionsService', () => {
     const mockedCreateQuestionDto : CreateQuestionDto = {
       questionType : 'EI',
       contents : '한 달 동안 공부, 프로젝트에 매진해 있어서 제대로 쉰 날이 하루도 없다... <br/>가까스로 다 끝낸 뒤 나는?',
-      activate : true
+      isActivate : true
     }
 
     const mockedErrorCreateQuestionDto = {
@@ -143,13 +143,13 @@ describe('QuestionsService', () => {
     const mockedUpdateQuestionId : number = 1;
     const mockedErrorUpdateQuestionId : number = 999;
     const mockedUpdateQuestionDto : UpdateQuestionDto = {
-      activate : false
+      isActivate : false
     }
     const mockedUpdateQuestion : Question = {
       id : 1,
       questionType : "EI",
       contents : '한 달 동안 공부, 프로젝트에 매진해 있어서 제대로 쉰 날이 하루도 없다... <br/>가까스로 다 끝낸 뒤 나는?',
-      activate : false,
+      isActivate : false,
       answer : []
     };
     const mockedErrorUpdateQuestionDto = {
@@ -170,9 +170,9 @@ describe('QuestionsService', () => {
 
       expect(BeforeUpdate.id).toEqual(AfterUpdate.id);
       expect(BeforeUpdate.contents).toEqual(AfterUpdate.contents);
-      expect(BeforeUpdate.activate).toBeTruthy();
-      expect(mockedUpdateQuestionDto.activate).toBeFalsy();
-      expect(AfterUpdate.activate).toBeFalsy();
+      expect(BeforeUpdate.isActivate).toBeTruthy();
+      expect(mockedUpdateQuestionDto.isActivate).toBeFalsy();
+      expect(AfterUpdate.isActivate).toBeFalsy();
     });
     
     it("should return a NotFoundException", async () => {

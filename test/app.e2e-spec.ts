@@ -59,7 +59,7 @@ describe('AppController (e2e)', () => {
       const createQuestionDto : CreateQuestionDto = {
         questionType : 'EI',
         contents : '한 달 동안 공부, 프로젝트에 매진해 있어서 제대로 쉰 날이 하루도 없다... <br/>가까스로 다 끝낸 뒤 나는?',
-        activate : true
+        isActivate : true
       }
 
       return request(app.getHttpServer())
@@ -115,7 +115,7 @@ describe('AppController (e2e)', () => {
     it("PATCH /:id (200)", ()=>{
       const updateQuestionId : number = 1;
       const updateQuestionDto : UpdateQuestionDto = {
-        activate : false
+        isActivate : false
       };
       return request(app.getHttpServer())
         .patch(defaultPath+`/${updateQuestionId}`)
@@ -126,7 +126,7 @@ describe('AppController (e2e)', () => {
     it("PATCH /:id (404)", ()=>{
       const updateErrorQuestionId : number = 999;
       const updateQuestionDto : UpdateQuestionDto = {
-        activate : false
+        isActivate : false
       };
       return request(app.getHttpServer())
         .patch(defaultPath+`/${updateErrorQuestionId}`)

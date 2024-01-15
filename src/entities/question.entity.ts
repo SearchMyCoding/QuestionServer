@@ -23,7 +23,7 @@ export class Question{
         type : "boolean",
         default : true
     })
-    activate : boolean;
+    isActivate : boolean;
 
     @OneToMany((type) => Answer, (answer : Answer) => answer.question)
     answer : Answer[]

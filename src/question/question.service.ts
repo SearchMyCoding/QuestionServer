@@ -26,7 +26,7 @@ export class QuestionService {
     async getQuestionsWithType(questionType : string) : Promise<Question[]>{
         const FoundQuestions : Question[] = await this.questionRepository.find({
             where : {
-                questionType : questionType
+                questionType
             }
         })
         if(!FoundQuestions || FoundQuestions.length === 0)
@@ -35,11 +35,11 @@ export class QuestionService {
     }
 
     async createQuestion(createQuestionDto : CreateQuestionDto) : Promise<void>{
-        const {questionType, contents, activate} = createQuestionDto;
+        const {questionType, contents, isActivate} = createQuestionDto;
         const newQuestion : Question = this.questionRepository.create({
-            questionType : questionType,
-            contents : contents,
-            activate : activate
+            questionType,
+            contents,
+            isActivate
         })
         await this.questionRepository.insert(newQuestion);
     }

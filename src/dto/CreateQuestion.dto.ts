@@ -20,5 +20,5 @@ export class CreateQuestionDto{
     })
     @IsOptional()
     @IsBoolean()
-    readonly activate : boolean;
+    readonly isActivate : boolean;
 }
