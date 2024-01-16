@@ -12,6 +12,7 @@ export class createAnswerTable1705066048854 implements MigrationInterface {
                         type: "int",
                         isPrimary: true,
                         isGenerated: true,
+                        isNullable: false
                     },
                     {
                         name: "answerType",
