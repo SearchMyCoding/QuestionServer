@@ -1,8 +1,16 @@
-import {MigrationInterface, QueryRunner, Table, TableForeignKey} from "typeorm";
+import {MigrationInterface, QueryRunner, Table, TableColumn, TableForeignKey, TableUnique} from "typeorm";
 
 export class addQuestionIdInAnswer1705407898681 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.addColumn(
+            "answer",
+            new TableColumn({
+                name: "questionId",
+                type: "int",
+                isNullable: false
+            })
+        )
         await queryRunner.createForeignKey(
             "answer",
             new TableForeignKey({
@@ -12,6 +20,13 @@ export class addQuestionIdInAnswer1705407898681 implements MigrationInterface {
                 onDelete: "CASCADE"
             })
         );
+        await queryRunner.createUniqueConstraint(
+            "answer",
+            new TableUnique({
+                name: "uniqueAnswerQuestion",
+                columnNames: ["id", "questionId"],
+            })
+        )
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -20,6 +35,8 @@ export class addQuestionIdInAnswer1705407898681 implements MigrationInterface {
             (fk : TableForeignKey) => fk.columnNames.indexOf("questionId") !== -1
         );
         await queryRunner.dropForeignKey("answer", foreignKey);
+        await queryRunner.dropColumn("answer", "questionId");
+        await queryRunner.dropUniqueConstraint("answer", "uniqueAnswerQuestion");
     }
 
 }
