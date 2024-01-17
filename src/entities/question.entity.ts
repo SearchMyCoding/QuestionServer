@@ -1,10 +1,35 @@
-import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn, Timestamp, PrimaryColumn } from "typeorm";
 import { Answer } from "./answer.entity";
 
 @Entity('question')
 export class Question{
-    @PrimaryGeneratedColumn()
-    id : number;
+    // @PrimaryGeneratedColumn("uuid")
+    // id : number;
+
+    @PrimaryColumn('uuid')
+    id: number;
+
+    @Column({generated : true, type: "int4"})
+    sequence: number;
+
+    @Column({
+        type: "timestamp",
+        nullable: false,
+        default: ()=>'CURRENT_TIMESTAMP'
+    })
+    createAt : Timestamp;
+
+    @Column({
+        type: "timestamp",
+        nullable: true
+    })
+    updateAt : Timestamp;
+
+    @Column({
+        type: "timestamp",
+        nullable: true
+    })
+    deleteAt : Timestamp;
 
     @Column({
         type : "varchar",
