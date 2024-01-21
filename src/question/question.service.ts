@@ -3,6 +3,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { DataSource, Repository } from 'typeorm';
 import { CreateQuestionDto } from '../dto/CreateQuestion.dto';
 import { Question } from '../entities/question.entity';
+import { QUESTION_TYPE } from 'src/constants/type';
 
 @Injectable()
 export class QuestionService {
@@ -28,7 +29,7 @@ export class QuestionService {
         return FoundQuestion;
     }
 
-    async getQuestionsWithType(questionType : string) : Promise<Question[]>{
+    async getQuestionsWithType(questionType : QUESTION_TYPE) : Promise<Question[]>{
         const FoundQuestions : Question[] = await this.questionRepository.find({
             where : {
                 questionType
@@ -58,7 +59,7 @@ export class QuestionService {
         await this.questionRepository.update({id : questionId},updateQuestionData);
     }
 
-    async getRandomQuestionIds(amountOfQuestion : number){
+    async getRandomQuestionIds(amountOfQuestion : number, questionType : QUESTION_TYPE){
         const isInteger : boolean = Number.isInteger(amountOfQuestion);
 
         if(!isInteger){
@@ -71,17 +72,28 @@ export class QuestionService {
             throw new BadRequestException(`${amountOfQuestion} is negative Integer.`);
         }
 
-        const maximum : number = await this.questionRepository.count();
+        const maximum : number = await this.questionRepository.count({
+            where: {
+                questionType
+            }
+        });
+
+        const isOverflow : boolean = amountOfQuestion > maximum;
+        const maximumOfLoop : number = isOverflow ? maximum : amountOfQuestion;
+
         const indexList : number[] = Array.from({length : maximum}, (_, index) => index);
         const result : number[] = [];
 
-        while(result.length < amountOfQuestion){
+        while(result.length < maximumOfLoop){
             const randomNumber = Math.floor(Math.random() * (indexList.length + 1));
             result.push(indexList[randomNumber]);
             indexList[randomNumber] = indexList[indexList.length - 1];
             indexList.pop();
         }
 
-        return result;
+        return {
+            questionType,
+            result
+        };
     }
 }
