@@ -36,7 +36,6 @@ export class addQuestionIdInAnswer1705407898681 implements MigrationInterface {
         );
         await queryRunner.dropForeignKey("answer", foreignKey);
         await queryRunner.dropColumn("answer", "questionId");
-        await queryRunner.dropUniqueConstraint("answer", "uniqueAnswerQuestion");
     }
 
 }
