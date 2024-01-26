@@ -1,9 +1,10 @@
-import { UpdateQuestionDto } from '../dto/UpdateQuestion.dto';
+import { UpdateQuestionDto } from 'src/dto/UpdateQuestion.dto';
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { Question } from 'src/entities/question.entity';
-import { CreateQuestionDto } from '../dto/CreateQuestion.dto';
-import { QuestionService } from './question.service';
+import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
+import { QuestionService } from 'src/question/question.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { QUESTION_TYPE } from 'src/constants/type';
 
 @Controller('question')
 @ApiTags('질문 API')
@@ -33,7 +34,7 @@ export class QuestionController {
         "summary" : "type을 이용한 질문 조회하는 요청",
         "description" : "type을 이용하여 질문을 조회하고 json 형태로 반환한다.(단, 한 개의 답변도 조회되지 않으면 에러를 반환한다.)"
     })
-    async getQuestionsWithType(@Param("type") questionType : string) : Promise<Question[]>{
+    async getQuestionsWithType(@Param("type") questionType : QUESTION_TYPE) : Promise<Question[]>{
         return await this.questionService.getQuestionsWithType(questionType);
     }
 

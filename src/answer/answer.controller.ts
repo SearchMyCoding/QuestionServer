@@ -1,8 +1,8 @@
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { UpdateAnswerDto } from '../dto/UpdateAnswer.dto';
+import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
 import { Answer } from 'src/entities/answer.entity';
-import { AnswerService } from './answer.service';
-import { CreateAnswerDto } from '../dto/CreateAnswer.dto';
+import { AnswerService } from 'src/answer/answer.service';
+import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Controller, Post, Body, Get, Param, Patch } from '@nestjs/common';
 
 @Controller('answer')

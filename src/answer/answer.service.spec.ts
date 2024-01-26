@@ -1,12 +1,12 @@
-import { UpdateAnswerDto } from '../dto/UpdateAnswer.dto';
-import { CreateAnswerDto } from '../dto/CreateAnswer.dto';
+import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
+import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Answer } from '../entities/answer.entity';
+import { Answer } from 'src/entities/answer.entity';
+import { Question } from 'src/entities/question.entity';
 import { Repository } from 'typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AnswerService } from './answer.service';
-import { Question } from '../entities/question.entity';
+import { AnswerService } from 'src/answer/answer.service';
 
 const mockAnswerRepository = () => ({
   find: jest.fn(),

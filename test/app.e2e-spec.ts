@@ -1,17 +1,17 @@
-import { UpdateAnswerDto } from './../src/dto/UpdateAnswer.dto';
-import { testTypeORMConfig } from './../src/config/typeorm.config';
-import { AnswerModule } from '../src/answer/answer.module';
-import { QuestionModule } from './../src/question/question.module';
+import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
+import { testTypeORMConfig } from 'src/config/typeorm.config';
+import { AnswerModule } from 'src/answer/answer.module';
+import { QuestionModule } from 'src/question/question.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { CreateAnswerDto } from './../src/dto/CreateAnswer.dto';
-import { UpdateQuestionDto } from './../src/dto/UpdateQuestion.dto';
-import { validationConfig } from './../src/config/validation.config';
+import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
+import { UpdateQuestionDto } from 'src/dto/UpdateQuestion.dto';
+import { validationConfig } from 'src/config/validation.config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
-import { clearDB } from './testHelper';
+import { clearDB } from 'test/testHelper';
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
@@ -57,7 +57,7 @@ describe('AppController (e2e)', () => {
 
     it("POST / (201)", ()=>{
       const createQuestionDto : CreateQuestionDto = {
-        questionType : 'EI',
+        // questionType : 'EI',
         contents : '한 달 동안 공부, 프로젝트에 매진해 있어서 제대로 쉰 날이 하루도 없다... <br/>가까스로 다 끝낸 뒤 나는?',
         isActivate : true
       }
