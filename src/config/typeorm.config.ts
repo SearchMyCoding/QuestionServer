@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import 'dotenv/config';
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { Answer } from '../entities/answer.entity';
-import { Question } from '../entities/question.entity';
+import { Answer } from 'src/entities/answer.entity';
+import { Question } from 'src/entities/question.entity';
 
 const config : ConfigService = new ConfigService();
 

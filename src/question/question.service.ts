@@ -1,8 +1,8 @@
-import { UpdateQuestionDto } from '../dto/UpdateQuestion.dto';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { CreateQuestionDto } from '../dto/CreateQuestion.dto';
-import { Question } from '../entities/question.entity';
+import { UpdateQuestionDto } from 'src/dto/UpdateQuestion.dto';
+import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
+import { Question } from 'src/entities/question.entity';
 import { QUESTION_TYPE } from 'src/constants/type';
 
 @Injectable()
@@ -92,7 +92,7 @@ export class QuestionService {
         }
 
         return {
-            questionType,
+            type: questionType,
             result
         };
     }
