@@ -1,24 +1,28 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, Timestamp } from "typeorm";
+import { Entity, Column, ManyToOne, Timestamp, PrimaryColumn } from "typeorm";
 import { Question } from "src/entities/question.entity";
+import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/type';
 
 @Entity('answer')
 export class Answer{
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryColumn("uuid")
     id : number;
 
-    @ManyToOne((type) => Question, (question : Question) => question.id)
-    question : number;
+    @ManyToOne("question", (question : Question) => question.id, {
+        cascade: true,
+        createForeignKeyConstraints: true,
+        nullable: false,
+    })
+    questionId : number;
 
     @Column({
         type: "timestamp",
-        nullable: false,
-        default: ()=>'CURRENT_TIMESTAMP'
+        nullable: false
     })
     createAt : Timestamp;
 
     @Column({
         type: "timestamp",
-        nullable: true
+        nullable: false
     })
     updateAt : Timestamp;
 
@@ -32,7 +36,7 @@ export class Answer{
         type : "varchar",
         length : 50
     })
-    answerType : string;
+    answerType : MBTI_SINGLE_TEMPLATE_TYPE;
 
     @Column({
         type : "varchar",
