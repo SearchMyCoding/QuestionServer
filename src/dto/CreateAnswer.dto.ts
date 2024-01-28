@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber } from 'class-validator';
+import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/type';
 
 export class CreateAnswerDto{
     @ApiProperty({
@@ -12,7 +13,7 @@ export class CreateAnswerDto{
         description : "대답 유형"
     })
     @IsString()
-    readonly answerType : string;
+    readonly answerType : MBTI_SINGLE_TEMPLATE_TYPE;
 
     @ApiProperty({
         description : "대답"
