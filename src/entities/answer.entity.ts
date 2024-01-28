@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, Timestamp, PrimaryColumn } from "typeorm";
+import { Entity, Column, ManyToOne, Timestamp, PrimaryColumn, Generated } from "typeorm";
 import { Question } from "src/entities/question.entity";
 import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/type';
 
@@ -7,30 +7,30 @@ export class Answer{
     @PrimaryColumn("uuid")
     id : number;
 
-    @ManyToOne("question", (question : Question) => question.id, {
-        cascade: true,
-        createForeignKeyConstraints: true,
-        nullable: false,
+    @Column({
+        generated : 'increment',
+        type: "int4"
     })
-    questionId : number;
+    @Generated('increment')
+    sequence: number;
 
     @Column({
-        type: "timestamp",
+        type: "timestamptz",
         nullable: false
     })
-    createAt : Timestamp;
+    createdAt : Date;
 
     @Column({
-        type: "timestamp",
+        type: "timestamptz",
         nullable: false
     })
-    updateAt : Timestamp;
+    updatedAt : Date;
 
     @Column({
-        type: "timestamp",
+        type: "timestamptz",
         nullable: true
     })
-    deleteAt : Timestamp;
+    deletedAt : Date;
 
     @Column({
         type : "varchar",
@@ -43,5 +43,12 @@ export class Answer{
         length : 500,
         unique: true
     })
-    contents : string
+    contents : string;
+
+    @ManyToOne("Question", "answers", {
+        cascade: true,
+        createForeignKeyConstraints: true,
+        nullable: false,
+    })
+    question : Question;
 }
