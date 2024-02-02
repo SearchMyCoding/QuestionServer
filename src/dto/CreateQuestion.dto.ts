@@ -1,12 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {IsString, IsBoolean, IsOptional} from 'class-validator';
+import { IsString, IsBoolean, IsOptional } from 'class-validator';
+import { QUESTION_TYPE } from 'src/constants/type';
 
 export class CreateQuestionDto{
     @ApiProperty({
-        description : "질문 유형"
+        description : "질문 유형",
+        required: true,
+        nullable: false,
     })
     @IsString()
-    readonly questionType : string;
+    readonly questionType : QUESTION_TYPE;
 
     @ApiProperty({
         description : "질문 내용"

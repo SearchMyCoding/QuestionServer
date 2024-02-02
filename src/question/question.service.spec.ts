@@ -1,7 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { UpdateQuestionDto } from '../dto/UpdateQuestion.dto';
-import { CreateQuestionDto } from '../dto/CreateQuestion.dto';
-import { Question } from '../entities/question.entity';
+import { UpdateQuestionDto } from 'src/dto/UpdateQuestion.dto';
+import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
+import { Question } from 'src/entities/question.entity';
 import { Repository } from 'typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { QuestionService } from './question.service';
