@@ -1,7 +1,7 @@
-import { ATTENTION_FOCUS, JUDGMENT_FUNCTION, LIFESTYLE, PERCEPTION_FUNCTION, ANSWER_TYPE, ATTENTION_FOCUS_TYPE, JUDGMENT_FUNCTION_TYPE, MBTI_SINGLE_TEMPLATE_TYPE, QUESTION_TYPE } from "src/constants/mbti";
+import { ATTENTION_FOCUS, JUDGMENT_FUNCTION, LIFESTYLE, PERCEPTION_FUNCTION, ANSWER_TYPE, MBTI_SINGLE_TEMPLATE_TYPE, QUESTION_TYPE } from "src/constants/mbti";
 
-class qaValidator{
-  static validateAnswerType<T extends MBTI_SINGLE_TEMPLATE_TYPE>(answerType: ANSWER_TYPE<T>): QUESTION_TYPE{
+export class qaValidator{
+  private static convertAnswerTypeToQuestionType<T extends MBTI_SINGLE_TEMPLATE_TYPE>(answerType: ANSWER_TYPE<T>): QUESTION_TYPE{
     const answerTypeStr: string = typeof answerType;
 
     switch(answerType){
@@ -18,12 +18,12 @@ class qaValidator{
     return null;
   }
 
-  static validatePairAnswerTypes<T extends MBTI_SINGLE_TEMPLATE_TYPE>(sourceType: ANSWER_TYPE<T>, targetType: ANSWER_TYPE<T>): boolean{
+  private static validatePairAnswerTypes<T extends MBTI_SINGLE_TEMPLATE_TYPE>(sourceType: ANSWER_TYPE<T>, targetType: ANSWER_TYPE<T>): boolean{
     const sourceTypeStr: string = typeof sourceType;
     const targetTypeStr: string = typeof targetType;
 
-    const sourceParentType: QUESTION_TYPE = qaValidator.validateAnswerType(sourceType);
-    const targetParentType: QUESTION_TYPE = qaValidator.validateAnswerType(targetType);
+    const sourceParentType: QUESTION_TYPE = qaValidator.convertAnswerTypeToQuestionType(sourceType);
+    const targetParentType: QUESTION_TYPE = qaValidator.convertAnswerTypeToQuestionType(targetType);
 
     if(sourceParentType && targetParentType && sourceParentType === targetParentType){
       if(sourceTypeStr !== targetTypeStr){
@@ -33,15 +33,16 @@ class qaValidator{
     return false;
   }
 
-  static validateQuestionAnswerPairType<T extends MBTI_SINGLE_TEMPLATE_TYPE>(questionType: QUESTION_TYPE, answerTypes: [ANSWER_TYPE<T>, ANSWER_TYPE<T>]): boolean{
+  public static validateQuestionAnswerPairType<T extends MBTI_SINGLE_TEMPLATE_TYPE>(questionType: QUESTION_TYPE, answerTypes: [ANSWER_TYPE<T>, ANSWER_TYPE<T>]): boolean{
     const [
       firstAnswerType,
       secondAnswerType
     ] = answerTypes;
 
-    const parentType = qaValidator.validateAnswerType(firstAnswerType);
+    const parentType = qaValidator.convertAnswerTypeToQuestionType(firstAnswerType);
+    const isPairAnswers = qaValidator.validatePairAnswerTypes(firstAnswerType, secondAnswerType);
 
-    if(questionType === parentType && qaValidator.validatePairAnswerTypes(firstAnswerType, secondAnswerType)){
+    if(questionType === parentType && isPairAnswers){
       return true;
     }
     
