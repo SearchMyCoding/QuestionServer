@@ -1,58 +1,71 @@
-import { Entity, Column, OneToMany, Timestamp, PrimaryColumn, Generated } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryColumn, Generated } from "typeorm";
 import { Answer } from "src/entities/answer.entity";
+import { UUID } from "crypto";
+import { LocalDateTimeTransformer } from "src/utils/transformer.util";
+import { LocalDateTime } from "@js-joda/core";
+import { QUESTION_TYPE } from "src/constants/mbti";
 
 @Entity('question')
 export class Question{
-    @PrimaryColumn('uuid')
-    id: number;
+  @PrimaryColumn('uuid')
+  id: UUID;
 
-    @Column({
-        generated : 'increment',
-        type: "int4"
-    })
-    @Generated('increment')
-    sequence: number;
+  @Column({
+    generated : 'increment',
+    type: "int"
+  })
+  @Generated('increment')
+  sequence: number;
 
-    @Column({
-        type: "timestamp",
-        nullable: false
-    })
-    createdAt : Timestamp;
+  @Column({
+    type: "timestamptz",
+    nullable: false,
+    transformer: new LocalDateTimeTransformer()
+  })
+  createdAt: LocalDateTime;
 
-    @Column({
-        type: "timestamp",
-        nullable: false
-    })
-    updatedAt : Timestamp;
+  @Column({
+    type: "timestamptz",
+    nullable: false,
+    transformer: new LocalDateTimeTransformer()
+  })
+  updatedAt: LocalDateTime;
 
-    @Column({
-        type: "timestamp",
-        nullable: true
-    })
-    deletedAt : Timestamp;
+  @Column({
+    type: "timestamptz",
+    nullable: true,
+    default: null,
+    transformer: new LocalDateTimeTransformer()
+  })
+  deletedAt: LocalDateTime;
 
-    @Column({
-        type : "varchar",
-        length : 500,
-        unique: true
-    })
-    contents : string;
+  @Column({
+    type: "varchar",
+    length: 512,
+    unique: true
+  })
+  contents: string;
 
-    @Column({
-        type : "varchar",
-        length : 20,
-    })
-    questionType : string;
+  @Column({
+    type: "varchar",
+    length: 32,
+  })
+  questionType: QUESTION_TYPE;
 
-    @Column({
-        type : "boolean",
-        default : true
-    })
-    isActivate : boolean;
+  @Column({
+    type: "boolean",
+    default: true,
+    nullable: false
+  })
+  isActivate: boolean;
 
-    @OneToMany(
-        "Answer",
-        "question"
-    )
-    answers : Answer[];
+  @OneToMany(
+    "Answer",
+    "question",
+    {
+      cascade: true,
+      nullable: false
+    }
+  )
+  answers: Answer[];
 }
