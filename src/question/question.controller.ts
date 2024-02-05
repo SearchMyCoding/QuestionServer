@@ -4,7 +4,8 @@ import { Question } from 'src/entities/question.entity';
 import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
 import { QuestionService } from 'src/question/question.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { QUESTION_TYPE } from 'src/constants/type';
+import { QUESTION_TYPE } from 'src/constants/mbti';
+import { UUID } from 'crypto';
 
 @Controller('question')
 @ApiTags('질문 API')
@@ -25,7 +26,7 @@ export class QuestionController {
         "summary" : "id를 이용한 질문 조회하는 요청",
         "description" : "id를 이용하여 질문을 조회하고 json 형태로 반환한다.(단, id에 맞는 답변을 찾지 못한다면 에러를 반환한다.)"
     })
-    async getOneQuestion(@Param("id") questionId : number) : Promise<Question>{
+    async getOneQuestion(@Param("id") questionId : UUID) : Promise<Question>{
         return await this.questionService.getOneQuestion(questionId);
     }
 
@@ -52,7 +53,7 @@ export class QuestionController {
         "summary" : "id를 이용하여 질문의 일부를 수정하는 요청",
         "description" : "id가 존재하여야 하며 body를 UpdateQuestionDto에 맞춰 요청해야한다."
     })
-    patchQuestion(@Param('id') questionId : number, @Body() updateQuestionDto : UpdateQuestionDto){
+    patchQuestion(@Param('id') questionId : UUID, @Body() updateQuestionDto : UpdateQuestionDto){
         return this.questionService.patchQuestion(questionId, updateQuestionDto);
     }
 }
