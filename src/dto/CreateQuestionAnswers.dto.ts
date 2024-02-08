@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsBoolean, IsOptional } from 'class-validator';
-import { MBTI_SINGLE_TEMPLATE_TYPE, QUESTION_TYPE } from 'src/constants/mbti';
+import { MBTI_SINGLE_TEMPLATE_TYPE, QUESTION_TYPE } from 'src/constants/mbti.constant';
 
 export class CreateQuestionAnswersDto{
   @ApiProperty({

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsBoolean, IsOptional } from 'class-validator';
-import { QUESTION_TYPE } from 'src/constants/mbti';
+import { QUESTION_TYPE } from 'src/constants/mbti.constant';
 
 export class CreateQuestionDto{
   @ApiProperty({

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsUUID } from 'class-validator';
 import { UUID } from 'crypto';
-import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/mbti';
+import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/mbti.constant';
 
 export class CreateAnswerDto{
     @ApiProperty({

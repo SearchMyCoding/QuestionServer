@@ -4,7 +4,7 @@ import { Question } from 'src/entities/question.entity';
 import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
 import { QuestionService } from 'src/question/question.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { QUESTION_TYPE } from 'src/constants/mbti';
+import { QUESTION_TYPE } from 'src/constants/mbti.constant';
 import { UUID } from 'crypto';
 
 @Controller('question')

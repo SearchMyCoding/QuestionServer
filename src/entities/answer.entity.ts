@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, Timestamp, PrimaryColumn, Generated } from "typeorm";
 import { Question } from "src/entities/question.entity";
-import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/mbti';
+import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/mbti.constant';
 import { UUID } from "crypto";
 import { LocalDateTime } from "@js-joda/core";
 import { LocalDateTimeTransformer } from "src/utils/transformer.util";
