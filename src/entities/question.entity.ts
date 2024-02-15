@@ -63,7 +63,6 @@ export class Question{
     "Answer",
     "question",
     {
-      cascade: true,
       nullable: false
     }
   )
