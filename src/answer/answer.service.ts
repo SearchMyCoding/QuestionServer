@@ -1,28 +1,27 @@
 import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Answer } from 'src/entities/answer.entity';
-import { Question } from 'src/entities/question.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import { UUID, randomUUID } from 'crypto';
+import { LocalDateTime } from '@js-joda/core';
 
 @Injectable()
 export class AnswerService {
-    private answerRepository : Repository<Answer>;
-    private questionRepository : Repository<Question>;
+    private answerRepository: Repository<Answer>;
     constructor(
-        private readonly datasource : DataSource,
+        private readonly datasource: DataSource,
     ){
         this.answerRepository = this.datasource.getRepository("answer");
-        this.questionRepository = this.datasource.getRepository("question");
     }
 
-    async getAllAnswer() : Promise<Answer[]>{
+    async getAnswers(): Promise<Answer[]>{
         return await this.answerRepository.find();
     }
 
-    async getOneAnswer(answerId : number) : Promise<Answer>{
-        const FoundAnswer : Answer = await this.answerRepository.findOne({
-            where : {
+    async getOneAnswer(answerId: UUID): Promise<Answer>{
+        const FoundAnswer: Answer = await this.answerRepository.findOne({
+            where: {
                 id: answerId,
             }
         });
@@ -31,47 +30,43 @@ export class AnswerService {
         return FoundAnswer;
     }
 
-    async getAnswerAboutQuestion(questionId : number) : Promise<Answer[]>{
-        const FoundQuestion : Question = await this.questionRepository.findOne({
-            where : {
-                id: questionId
+    async getAnswerAboutQuestion(questionId: UUID): Promise<Answer[]> {
+        const FoundAnswers: Answer[] = await this.answerRepository.find({
+            relations: {
+                question: true
             },
-            relations: ["answer"]
+            where: {
+                question: {
+                    id: questionId
+                }
+            }
         });
-        if(!FoundQuestion)
-            throw new NotFoundException(`Question with Id ${questionId} is not found`);
-        
-        return FoundQuestion.answer;
+        return FoundAnswers;
     }
 
-    async createAnswer(createAnswerDto : CreateAnswerDto) : Promise<void>{
+    async createAnswer(createAnswerDto: CreateAnswerDto): Promise<void>{
         const {answerType, questionId, contents} = createAnswerDto;
-        const question : Question = await this.questionRepository.findOne({
-            where : {
+        const now: LocalDateTime = LocalDateTime.now();
+        const newAnswer: Answer = this.answerRepository.create({
+            id: randomUUID(),
+            createdAt: now,
+            updatedAt: now,
+            answerType,
+            contents,
+            question: {
                 id: questionId
-            },
-            relations: ["answer"]
+            }
         });
-        const newAnswer : Answer = this.answerRepository.create({
-            answerType : answerType,
-            question : questionId,
-            contents : contents
-        });
+
         await this.answerRepository.insert(newAnswer);
-        const answer : Answer = await this.answerRepository.findOne({
-            where: { contents }
-        });
-        
-        question.answer.push(answer);
-        await this.questionRepository.save(question);
     }
 
-    async patchAnswer(answerId :number, updateAnswerDto : UpdateAnswerDto) : Promise<void>{
+    async patchAnswer(answerId: UUID, updateAnswerDto: UpdateAnswerDto): Promise<void>{
         try{
             await this.getOneAnswer(answerId);
         }catch(err){
             throw err;
         }
-        await this.answerRepository.update({id : answerId}, updateAnswerDto);
+        await this.answerRepository.update({id: answerId}, updateAnswerDto);
     }
 }
