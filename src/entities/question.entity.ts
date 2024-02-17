@@ -63,7 +63,7 @@ export class Question{
     "Answer",
     "question",
     {
-      nullable: false
+      nullable: true
     }
   )
   answers: Answer[];
