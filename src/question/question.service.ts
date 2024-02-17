@@ -3,7 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UpdateQuestionDto } from 'src/dto/UpdateQuestion.dto';
 import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
 import { Question } from 'src/entities/question.entity';
-import { QUESTION_TYPE } from 'src/constants/mbti';
+import { QUESTION_TYPE } from 'src/constants/mbti.constant';
 import { UUID, randomUUID } from 'crypto';
 import { LocalDateTime } from '@js-joda/core';
 

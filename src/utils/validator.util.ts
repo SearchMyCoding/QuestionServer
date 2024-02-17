@@ -1,7 +1,7 @@
-import { ATTENTION_FOCUS, JUDGMENT_FUNCTION, LIFESTYLE, PERCEPTION_FUNCTION, ANSWER_TYPE, MBTI_SINGLE_TEMPLATE_TYPE, QUESTION_TYPE } from "src/constants/mbti";
+import { ATTENTION_FOCUS, JUDGMENT_FUNCTION, LIFESTYLE, PERCEPTION_FUNCTION, ANSWER_TYPE, MBTI_SINGLE_TEMPLATE_TYPE, QUESTION_TYPE } from "src/constants/mbti.constant";
 
 export class qaValidator{
-  private static convertAnswerTypeToQuestionType<T extends MBTI_SINGLE_TEMPLATE_TYPE>(answerType: ANSWER_TYPE<T>): QUESTION_TYPE{
+  public static convertAnswerTypeToQuestionType<T extends MBTI_SINGLE_TEMPLATE_TYPE>(answerType: ANSWER_TYPE<T>): QUESTION_TYPE{
     const answerTypeStr: string = typeof answerType;
 
     switch(answerType){

@@ -22,10 +22,11 @@
     "typeorm": "typeorm-ts-node-esm",
     "migrate:create": "typeorm-ts-node-esm migration:create src/database/migrations/$npm_config_name",
     "migrate:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run --dataSource src/config/data-source.config.ts",
-    "migrate:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert --dataSource src/config/data-source.config.ts"
+    "migrate:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert --dataSource src/config/data-source.config.ts",
+    "nest": "node node_modules/.bin/nest"
   },
   "dependencies": {
-    "@nestjs/cli": "^9.2.0",
+    "@js-joda/core": "^5.6.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
@@ -42,6 +43,7 @@
     "typeorm": "^0.3.19"
   },
   "devDependencies": {
+    "@nestjs/cli": "^10.3.2",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
     "@types/dotenv": "^8.2.0",
@@ -81,7 +83,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   },
   "config": {
     "commitizen": {

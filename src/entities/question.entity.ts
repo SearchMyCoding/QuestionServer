@@ -3,7 +3,7 @@ import { Answer } from "src/entities/answer.entity";
 import { UUID } from "crypto";
 import { LocalDateTimeTransformer } from "src/utils/transformer.util";
 import { LocalDateTime } from "@js-joda/core";
-import { QUESTION_TYPE } from "src/constants/mbti";
+import { QUESTION_TYPE } from "src/constants/mbti.constant";
 
 @Entity('question')
 export class Question{
@@ -63,8 +63,7 @@ export class Question{
     "Answer",
     "question",
     {
-      cascade: true,
-      nullable: false
+      nullable: true
     }
   )
   answers: Answer[];
