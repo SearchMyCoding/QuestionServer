@@ -3,14 +3,15 @@ const PAGINATION = {
   SEARCH: "SEARCH"
 } as const;
 
-const PAGINATION_DEFAULT_VALUE = {
-  skip: 0,
-  limit: 10,
-} as const;
-
 const ORDER_BY = {
   ASC: "ASC",
   DESC: "DESC"
+} as const;
+
+const PAGINATION_DEFAULT_VALUE = {
+  skip: 0,
+  limit: 10,
+  sort: ORDER_BY.ASC
 } as const;
 
 type PAGINATION_TYPE = typeof PAGINATION[keyof typeof PAGINATION];

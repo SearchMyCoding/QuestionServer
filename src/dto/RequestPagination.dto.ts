@@ -1,13 +1,17 @@
-import { IsInt, IsOptional, IsPositive } from "class-validator";
-import { PAGINATION_DEFAULT_VALUE } from "src/constants/pagination.constant";
+import { IsInt, IsOptional, IsPositive, IsString } from "class-validator";
+import { ORDER_BY_TYPE } from "src/constants/pagination.constant";
 
 export class RequestPaginationDto {
   @IsInt()
   @IsOptional()
-  skip? : number = PAGINATION_DEFAULT_VALUE.skip;
+  skip? : number;
 
   @IsPositive()
   @IsInt()
   @IsOptional()
-  limit?: number = PAGINATION_DEFAULT_VALUE.limit;
+  limit?: number;
+
+  @IsString()
+  @IsOptional()
+  sort?: ORDER_BY_TYPE
 }

@@ -5,6 +5,7 @@ import { AnswerService } from 'src/answer/answer.service';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Controller, Post, Body, Get, Param, Patch, Query } from '@nestjs/common';
 import { UUID } from 'crypto';
+import { RequestPaginationDto } from 'src/dto/RequestPagination.dto';
 
 @Controller('answers')
 @ApiTags("답변 API")
@@ -18,8 +19,8 @@ export class AnswerController {
         "summary" : "답변 조회하는 요청",
         "description" : "답변 배열 형태로 반환한다. 세부사항에 따라 쿼리에 담아서 전송한다."
     })
-    async getAnswers(@Query() queryParams): Promise<Answer[]>{
-        return await this.answerService.getAnswers();
+    async getAnswers(@Query() requestPaginationDto?: RequestPaginationDto): Promise<Answer[]>{
+        return await this.answerService.getAnswers(requestPaginationDto);
     }
 
     @Get('')
