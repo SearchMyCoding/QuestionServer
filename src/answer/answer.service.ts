@@ -21,14 +21,18 @@ export class AnswerService {
         const { skip, limit, sort } = requestPaginationDto;
 
         return await this.answerRepository.find({
-            skip: (skip ?? PAGINATION_DEFAULT_VALUE.skip),
-            take: (limit ?? PAGINATION_DEFAULT_VALUE.limit),
             order: {
                 sequence: (ORDER_BY[sort] ?? "ASC")
-            }
+            },
+            skip: (skip ?? PAGINATION_DEFAULT_VALUE.skip),
+            take: (limit ?? PAGINATION_DEFAULT_VALUE.limit),
         });
     }
 
+    async getAnswersMetadata(): Promise<number>{
+        const result = {};
+        return await this.answerRepository.count();
+    }
 
     async getOneAnswer(answerId: UUID): Promise<Answer>{
         const FoundAnswer: Answer = await this.answerRepository.findOne({
