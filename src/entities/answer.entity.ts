@@ -3,7 +3,7 @@ import { Question } from "src/entities/question.entity";
 import { MBTI_SINGLE_TEMPLATE_TYPE } from 'src/constants/mbti.constant';
 import { UUID } from "crypto";
 import { LocalDateTime } from "@js-joda/core";
-import { LocalDateTimeTransformer } from "src/utils/transformer.util";
+import { LocalDateTimeTransformer } from "src/utils";
 
 @Entity('answer')
 export class Answer{
