@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, PrimaryColumn, Generated } from "typeorm";
 import { Answer } from "src/entities/answer.entity";
 import { UUID } from "crypto";
-import { LocalDateTimeTransformer } from "src/utils/transformer.util";
+import { LocalDateTimeTransformer } from "src/utils";
 import { LocalDateTime } from "@js-joda/core";
 import { QUESTION_TYPE } from "src/constants/mbti.constant";
 

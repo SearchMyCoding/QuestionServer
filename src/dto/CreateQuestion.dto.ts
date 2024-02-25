@@ -7,7 +7,7 @@ export class CreateQuestionDto{
     description : "질문 유형",
     required: true,
     nullable: false,
-    example: 'ATTENTION_FOCUS'
+    examples: ["ATTENTION_FOCUS", "PERCEPTION_FUNCTION", "JUDGMENT_FUNCTION", "LIFESTYLE"]
   })
   @IsString()
   readonly questionType: QUESTION_TYPE;

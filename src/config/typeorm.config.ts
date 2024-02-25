@@ -26,5 +26,6 @@ export const testTypeORMConfig : TypeOrmModuleOptions = {
   password: config.get<string>('TEST_DATABASE_PASSWORD'),
   database: config.get<string>('TEST_DATABASE_DATABASE'),
   entities: [Question, Answer],
+  logging: true,
   synchronize : true
 }
