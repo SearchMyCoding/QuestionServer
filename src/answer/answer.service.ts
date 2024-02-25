@@ -2,11 +2,10 @@ import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Answer } from 'src/entities/answer.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, FindOptionsOrder, Repository } from 'typeorm';
+import { DataSource, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { UUID, randomUUID } from 'crypto';
 import { LocalDateTime } from '@js-joda/core';
 import { RequestPaginationDto } from 'src/dto/RequestPagination.dto';
-import { ORDER_BY, PAGINATION_DEFAULT_VALUE } from 'src/constants/pagination.constant';
 
 @Injectable()
 export class AnswerService {
@@ -17,21 +16,40 @@ export class AnswerService {
         this.answerRepository = this.datasource.getRepository("answer");
     }
 
-    async getAnswers(requestPaginationDto?: RequestPaginationDto): Promise<Answer[]>{
-        const { skip, limit, sort } = requestPaginationDto;
+    async getAnswers(requestPaginationDto: RequestPaginationDto): Promise<Answer[]>{
+        const { skip, limit, sort, afterBy } = requestPaginationDto;
 
         return await this.answerRepository.find({
             order: {
-                sequence: (ORDER_BY[sort] ?? "ASC")
+                sequence: sort
             },
-            skip: (skip ?? PAGINATION_DEFAULT_VALUE.skip),
-            take: (limit ?? PAGINATION_DEFAULT_VALUE.limit),
+            skip,
+            take: limit,
+            where: {
+                sequence: sort === 'ASC' ? MoreThanOrEqual(afterBy) : LessThanOrEqual(afterBy)
+            }
         });
     }
 
-    async getAnswersMetadata(): Promise<number>{
-        const result = {};
-        return await this.answerRepository.count();
+    async getAnswerAboutQuestion(questionId: UUID, requestPaginationDto: RequestPaginationDto): Promise<Answer[]> {
+        const { skip, limit, sort } = requestPaginationDto;
+
+        const FoundAnswers: Answer[] = await this.answerRepository.find({
+            relations: {
+                question: true
+            },
+            where: {
+                question: {
+                    id: questionId
+                }
+            },
+            order: {
+                sequence: sort
+            },
+            skip,
+            take: limit,
+        });
+        return FoundAnswers;
     }
 
     async getOneAnswer(answerId: UUID): Promise<Answer>{
@@ -43,20 +61,6 @@ export class AnswerService {
         if(!FoundAnswer)
             throw new NotFoundException(`Answer with Id ${answerId} is not found.`);
         return FoundAnswer;
-    }
-
-    async getAnswerAboutQuestion(questionId: UUID): Promise<Answer[]> {
-        const FoundAnswers: Answer[] = await this.answerRepository.find({
-            relations: {
-                question: true
-            },
-            where: {
-                question: {
-                    id: questionId
-                }
-            }
-        });
-        return FoundAnswers;
     }
 
     async createAnswer(createAnswerDto: CreateAnswerDto): Promise<void>{

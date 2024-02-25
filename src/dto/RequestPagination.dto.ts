@@ -26,4 +26,13 @@ export class RequestPaginationDto {
   @IsString()
   @IsOptional()
   sort?: ORDER_BY_TYPE
+
+  @ApiProperty({
+    required: false,
+    type: Number
+  })
+  @IsPositive()
+  @IsInt()
+  @IsOptional()
+  afterBy?: number
 }

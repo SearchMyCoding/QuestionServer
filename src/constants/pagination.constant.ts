@@ -11,7 +11,8 @@ const ORDER_BY = {
 const PAGINATION_DEFAULT_VALUE = {
   skip: 0,
   limit: 10,
-  sort: ORDER_BY.ASC
+  sort: ORDER_BY.ASC,
+  afterBy: 1
 } as const;
 
 type PAGINATION_TYPE = typeof PAGINATION[keyof typeof PAGINATION];

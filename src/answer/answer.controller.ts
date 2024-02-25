@@ -1,4 +1,4 @@
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
 import { Answer } from 'src/entities/answer.entity';
 import { AnswerService } from 'src/answer/answer.service';
@@ -6,6 +6,7 @@ import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Controller, Post, Body, Get, Param, Patch, Query } from '@nestjs/common';
 import { UUID } from 'crypto';
 import { RequestPaginationDto } from 'src/dto/RequestPagination.dto';
+import { PaginationQuery } from 'src/decorators/pagination-query.decorator';
 
 @Controller('answers')
 @ApiTags("답변 API")
@@ -19,17 +20,19 @@ export class AnswerController {
         "summary" : "답변 조회하는 요청",
         "description" : "답변 배열 형태로 반환한다. 세부사항에 따라 쿼리에 담아서 전송한다."
     })
-    async getAnswers(@Query() requestPaginationDto?: RequestPaginationDto): Promise<Answer[]>{
-        return await this.answerService.getAnswers(requestPaginationDto);
-    }
-
-    @Get('')
-    @ApiOperation({
-        "summary" : "id를 이용한 답변 조회하는 요청",
-        "description" : "질문 id를 이용하여 답변을 조회하고 json 형태로 반환한다.(단, 한 개의 답변도 조회되지 않으면 에러를 반환한다.)"
+    @ApiQuery({ type: RequestPaginationDto })
+    @ApiQuery({
+        name: "questionId",
+        required: false
     })
-    async getAnswerAboutQuestion(@Query("questionId") questionId: UUID): Promise<Answer[]> {
-        return await this.answerService.getAnswerAboutQuestion(questionId);
+    async getAnswers(
+        @PaginationQuery() requestPaginationDto: RequestPaginationDto,
+        @Query("questionId") questionId?: UUID,
+    ): Promise<Answer[]>{
+        if(!!questionId){
+            return await this.answerService.getAnswerAboutQuestion(questionId, requestPaginationDto);
+        }
+        return await this.answerService.getAnswers(requestPaginationDto);
     }
 
     @Post('')
