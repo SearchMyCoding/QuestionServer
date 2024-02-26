@@ -3,9 +3,11 @@ import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common
 import { Question } from 'src/entities/question.entity';
 import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
 import { QuestionService } from 'src/question/question.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { QUESTION_TYPE } from 'src/constants/mbti.constant';
 import { UUID } from 'crypto';
+import { RequestPaginationDto } from 'src/dto/RequestPagination.dto';
+import { PaginationQuery } from 'src/decorators/pagination-query.decorator';
 
 @Controller('questions')
 @ApiTags('질문 API')
@@ -14,22 +16,24 @@ export class QuestionController {
 
     @Get()
     @ApiOperation({
-        "summary": "모든 질문 조회하는 요청",
-        "description": "모든 질문 배열 형태로 반환한다."
+        "summary": "질문 조회하는 요청",
+        "description": "질문 배열 형태로 반환한다.",
     })
-    async getAllQuestions(){
-        return await this.questionService.getAllQuestions();
-    }
-
-    @Get()
-    @ApiOperation({
-        "summary": "type을 이용한 질문 조회하는 요청",
-        "description": "type을 이용하여 질문을 조회하고 json 형태로 반환한다.(단, 한 개의 답변도 조회되지 않으면 에러를 반환한다.)"
+    @ApiQuery({ type: RequestPaginationDto })
+    @ApiQuery({
+        name: "type",
+        required: false
     })
-    async getQuestionsWithType(
-        @Query('type') questionType: QUESTION_TYPE
-    ): Promise<Question[]>{
-        return await this.questionService.getQuestionsWithType(questionType);
+    async getQuestions(
+        @PaginationQuery()
+        requestPaginationDto: RequestPaginationDto,
+        @Query('type')
+        questionType?: QUESTION_TYPE,
+    ){
+        if(!!questionType){
+            return await this.questionService.getQuestionsWithType(questionType, requestPaginationDto);
+        }
+        return await this.questionService.getQuestions(requestPaginationDto);
     }
 
     @Get(':id')
