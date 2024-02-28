@@ -59,8 +59,9 @@ export class AnswerService {
                 id: answerId,
             }
         });
-        if(!FoundAnswer)
+        if(!FoundAnswer){
             throw new NotFoundException(`Answer with Id ${answerId} is not found.`);
+        }
         return FoundAnswer;
     }
 
