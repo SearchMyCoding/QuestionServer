@@ -1,44 +1,10 @@
 import { Entity, Column, OneToMany, PrimaryColumn, Generated } from "typeorm";
 import { Answer } from "src/entities/answer.entity";
-import { UUID } from "crypto";
-import { LocalDateTimeTransformer } from "src/utils";
-import { LocalDateTime } from "@js-joda/core";
 import { QUESTION_TYPE } from "src/constants/mbti.constant";
+import { BaseTimeEntity } from "src/entities/base-time.entity";
 
 @Entity('question')
-export class Question{
-  @PrimaryColumn('uuid')
-  id: UUID;
-
-  @Column({
-    generated : 'increment',
-    type: "int"
-  })
-  @Generated('increment')
-  sequence: number;
-
-  @Column({
-    type: "timestamptz",
-    nullable: false,
-    transformer: new LocalDateTimeTransformer()
-  })
-  createdAt: LocalDateTime;
-
-  @Column({
-    type: "timestamptz",
-    nullable: false,
-    transformer: new LocalDateTimeTransformer()
-  })
-  updatedAt: LocalDateTime;
-
-  @Column({
-    type: "timestamptz",
-    nullable: true,
-    default: null,
-    transformer: new LocalDateTimeTransformer()
-  })
-  deletedAt: LocalDateTime;
-
+export class Question extends BaseTimeEntity{
   @Column({
     type: "varchar",
     length: 512,
