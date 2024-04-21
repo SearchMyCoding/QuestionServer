@@ -52,14 +52,16 @@ export class AnswerService {
         return FoundAnswers;
     }
 
+
     async getOneAnswer(answerId: UUID): Promise<Answer>{
         const FoundAnswer: Answer = await this.answerRepository.findOne({
             where: {
                 id: answerId,
             }
         });
-        if(!FoundAnswer)
+        if(!FoundAnswer){
             throw new NotFoundException(`Answer with Id ${answerId} is not found.`);
+        }
         return FoundAnswer;
     }
 
@@ -96,11 +98,19 @@ export class AnswerService {
     }
 
     async patchAnswer(answerId: UUID, updateAnswerDto: UpdateAnswerDto): Promise<void>{
+        const now: LocalDateTime = LocalDateTime.now();
         try{
             await this.getOneAnswer(answerId);
         }catch(err){
             throw err;
         }
-        await this.answerRepository.update({id: answerId}, updateAnswerDto);
+        await this.answerRepository.update(
+            {
+                id: answerId
+            }, 
+            {
+                ...updateAnswerDto,
+                updatedAt: now
+            });
     }
 }

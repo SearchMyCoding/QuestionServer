@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { UpdateQuestionDto } from 'src/dto/UpdateQuestion.dto';
 import { CreateQuestionDto } from 'src/dto/CreateQuestion.dto';
 import { Question } from 'src/entities/question.entity';
 import { QUESTION_TYPE } from 'src/constants/mbti.constant';
 import { UUID, randomUUID } from 'crypto';
 import { LocalDateTime } from '@js-joda/core';
+import { RequestPaginationDto } from 'src/dto/RequestPagination.dto';
 
 @Injectable()
 export class QuestionService {
@@ -16,8 +17,19 @@ export class QuestionService {
         this.questionRepository = this.datasource.getRepository("question");
     }
 
-    async getAllQuestions(): Promise<Question[]>{
-        return await this.questionRepository.find();
+    async getQuestions(requestPaginationDto: RequestPaginationDto): Promise<Question[]>{
+        const { skip, limit, sort, afterBy } = requestPaginationDto;
+
+        return await this.questionRepository.find({
+            order: {
+                sequence: sort
+            },
+            skip,
+            take: limit,
+            where: {
+                sequence: sort === 'ASC' ? MoreThanOrEqual(afterBy) : LessThanOrEqual(afterBy)
+            }
+        });
     }
 
     async getOneQuestion(questionId: UUID): Promise<Question>{
@@ -31,14 +43,20 @@ export class QuestionService {
         return FoundQuestion;
     }
 
-    async getQuestionsWithType(questionType : QUESTION_TYPE) : Promise<Question[]>{
+    async getQuestionsWithType(questionType: QUESTION_TYPE, requestPaginationDto: RequestPaginationDto): Promise<Question[]>{
+        const { skip, limit, sort, afterBy } = requestPaginationDto;
+
         const FoundQuestions: Question[] = await this.questionRepository.find({
             where : {
                 questionType
-            }
-        })
-        if(!FoundQuestions || FoundQuestions.length === 0)
-            throw new NotFoundException(`Questions with type ${questionType} is not found.`);
+            },
+            order: {
+                sequence: sort
+            },
+            skip,
+            take: limit,
+        });
+        
         return FoundQuestions;
     }
 
@@ -62,7 +80,8 @@ export class QuestionService {
             .execute();
     }
 
-    async patchQuestion(questionId: UUID, updateQuestionData: UpdateQuestionDto) : Promise<void>{
+    async patchQuestion(questionId: UUID, updateQuestionDto: UpdateQuestionDto) : Promise<void>{
+        const now: LocalDateTime = LocalDateTime.now();
         try{
             await this.getOneQuestion(questionId);
         }catch(err){
@@ -72,7 +91,10 @@ export class QuestionService {
             {
                 id: questionId
             },
-            updateQuestionData
+            {
+                ...updateQuestionDto,
+                updatedAt: now
+            }
         );
     }
 
