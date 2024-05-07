@@ -7,6 +7,6 @@ import { AnswerService } from 'src/answer/answer.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Answer])],
   controllers: [AnswerController],
-  providers: [AnswerService]
+  providers: [AnswerService],
 })
 export class AnswerModule {}
