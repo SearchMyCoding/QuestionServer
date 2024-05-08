@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run lint-staged && git add $(git diff --name-only --cached) && exec < /dev/tty && node_modules/.bin/cz --hook || true
+npm run lint-staged && git add $(git diff --name-only --cached --diff-filter=AM) && exec < /dev/tty && node_modules/.bin/cz --hook || true
