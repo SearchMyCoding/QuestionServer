@@ -70,11 +70,11 @@ export class CreateAnswer1712460812932 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const answers = await queryRunner.getTable("answer")
+    const answers = await queryRunner.getTable('answer');
     const foreignKey = answers.foreignKeys.find(
-        (fk) => fk.columnNames.indexOf("questionId") !== -1,
-    )
-    await queryRunner.dropForeignKey("answer", foreignKey);
+      (fk) => fk.columnNames.indexOf('questionId') !== -1,
+    );
+    await queryRunner.dropForeignKey('answer', foreignKey);
     await queryRunner.dropTable('answer');
   }
 }
