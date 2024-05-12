@@ -24,6 +24,7 @@
     "migrate:create": "typeorm-ts-node-esm migration:create src/database/migrations/$npm_config_name",
     "migrate:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run --dataSource src/config/data-source.config.ts",
     "migrate:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert --dataSource src/config/data-source.config.ts",
+    "subscriber:create": "typeorm-ts-node-esm subscriber:create src/database/subscribers/$(echo $npm_config_name)Subscriber",
     "nest": "node node_modules/.bin/nest"
   },
   "dependencies": {
