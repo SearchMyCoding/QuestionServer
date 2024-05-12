@@ -1,116 +1,174 @@
 import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Answer } from 'src/entities/answer.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
-import { UUID, randomUUID } from 'crypto';
-import { LocalDateTime } from '@js-joda/core';
-import { RequestPaginationDto } from 'src/dto/RequestPagination.dto';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  DeleteResult,
+  FindManyOptions,
+  FindOptionsWhere,
+  InsertResult,
+  QueryRunner,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { createBaseCrudService } from '@exnest/extended-nest';
+import { Question } from 'src/question/question.entity';
 
 @Injectable()
-export class AnswerService {
-    private answerRepository: Repository<Answer>;
-    constructor(
-        private readonly datasource: DataSource,
-    ){
-        this.answerRepository = this.datasource.getRepository("answer");
-    }
+export class AnswerService extends createBaseCrudService(Answer) {
+  constructor(
+    @InjectRepository(Answer)
+    readonly repository: Repository<Answer>,
+  ) {
+    super(repository);
+  }
+  override async read(
+    targetOption?: FindManyOptions<Answer>,
+    transaction = true,
+  ): Promise<Answer[]> {
+    return super.read(targetOption, transaction);
+  }
 
-    async getAnswers(requestPaginationDto: RequestPaginationDto): Promise<Answer[]>{
-        const { skip, limit, sort, afterBy } = requestPaginationDto;
+  override async create(
+    createDto: CreateAnswerDto | CreateAnswerDto[],
+  ): Promise<InsertResult> {
+    const isArray: boolean = Array.isArray(createDto);
+    const length: number = isArray
+      ? (createDto as CreateAnswerDto[]).length
+      : 1;
 
-        return await this.answerRepository.find({
-            order: {
-                sequence: sort
-            },
-            skip,
-            take: limit,
-            where: {
-                sequence: sort === 'ASC' ? MoreThanOrEqual(afterBy) : LessThanOrEqual(afterBy)
-            }
-        });
-    }
+    const queryRunner: QueryRunner =
+      this.repository.manager.connection.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
 
-    async getAnswerAboutQuestion(questionId: UUID, requestPaginationDto: RequestPaginationDto): Promise<Answer[]> {
-        const { skip, limit, sort } = requestPaginationDto;
+      const answers: Answer[] = await Promise.all(
+        Array.from({ length }, async (_, index: number) => {
+          const answer: Answer = this.repository.create(
+            isArray
+              ? (createDto as CreateAnswerDto[])[index]
+              : (createDto as CreateAnswerDto),
+          );
 
-        const FoundAnswers: Answer[] = await this.answerRepository.find({
-            relations: {
-                question: true
-            },
-            where: {
-                question: {
-                    id: questionId
-                }
-            },
-            order: {
-                sequence: sort
-            },
-            skip,
-            take: limit,
-        });
-        return FoundAnswers;
-    }
-
-
-    async getOneAnswer(answerId: UUID): Promise<Answer>{
-        const FoundAnswer: Answer = await this.answerRepository.findOne({
-            where: {
-                id: answerId,
-            }
-        });
-        if(!FoundAnswer){
-            throw new NotFoundException(`Answer with Id ${answerId} is not found.`);
-        }
-        return FoundAnswer;
-    }
-
-    async createAnswer(createAnswerDto: CreateAnswerDto): Promise<void>{
-        const {answerType, questionId, contents} = createAnswerDto;
-        const now: LocalDateTime = LocalDateTime.now();
-        const newAnswer: Answer = this.answerRepository.create({
-            id: randomUUID(),
-            createdAt: now,
-            updatedAt: now,
-            answerType,
-            contents,
-            question: {
-                id: questionId
-            }
-        });
-
-        await this.answerRepository.insert(newAnswer);
-        
-        const queryRunner = this.datasource.createQueryRunner();
-        try{
-            await queryRunner.connect();
-            await queryRunner.startTransaction();
-
-            await queryRunner.manager.getRepository("answer").insert(newAnswer);
-
-            await queryRunner.commitTransaction();
-        } catch (err) {
-            queryRunner.rollbackTransaction();
-            throw err;
-        } finally {
-            queryRunner.release();
-        }
-    }
-
-    async patchAnswer(answerId: UUID, updateAnswerDto: UpdateAnswerDto): Promise<void>{
-        const now: LocalDateTime = LocalDateTime.now();
-        try{
-            await this.getOneAnswer(answerId);
-        }catch(err){
-            throw err;
-        }
-        await this.answerRepository.update(
+          const question: Question = await queryRunner.manager.findOne(
+            Question,
             {
-                id: answerId
-            }, 
-            {
-                ...updateAnswerDto,
-                updatedAt: now
-            });
+              where: {
+                id: answer.question.id,
+              },
+            },
+          );
+
+          if (!question) {
+            throw new NotFoundException(
+              `Fail to find ${Question.name} with ID ${question.id}`,
+            );
+          }
+
+          return answer;
+        }),
+      );
+
+      const result: InsertResult = await queryRunner.manager
+        .withRepository(this.repository)
+        .insert(answers);
+
+      await queryRunner.commitTransaction();
+      return result;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw new ConflictException(e);
+    } finally {
+      await queryRunner.release();
     }
+  }
+
+  override async update(
+    targetOption: FindOptionsWhere<Answer>,
+    updateDto: UpdateAnswerDto,
+  ): Promise<UpdateResult> {
+    const queryRunner: QueryRunner =
+      this.repository.manager.connection.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const answers: Answer[] = await this.read(
+        {
+          where: targetOption,
+        },
+        false,
+      );
+
+      if (answers.length === 0) {
+        throw new NotFoundException(
+          `Fail to find ${Answer.name} with Option ${targetOption}`,
+        );
+      }
+
+      const result: UpdateResult = await queryRunner.manager
+        .withRepository(this.repository)
+        .update(targetOption, updateDto);
+
+      await queryRunner.commitTransaction();
+      return;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw e;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async softDelete(
+    targetOption: FindOptionsWhere<Answer>,
+  ): Promise<UpdateResult> {
+    const queryRunner: QueryRunner =
+      this.repository.manager.connection.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const result: UpdateResult = await queryRunner.manager
+        .withRepository(this.repository)
+        .softDelete(targetOption);
+
+      await queryRunner.commitTransaction();
+      return result;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw e;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async delete(targetOption: FindOptionsWhere<Answer>): Promise<DeleteResult> {
+    const queryRunner: QueryRunner =
+      this.repository.manager.connection.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const result: DeleteResult = await queryRunner.manager
+        .withRepository(this.repository)
+        .delete(targetOption);
+
+      await queryRunner.commitTransaction();
+      return;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
 }

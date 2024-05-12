@@ -1,20 +1,26 @@
-import { validationConfig } from 'src/config/validation.config';
-import { SwaggerConfig } from 'src/config/swagger.config';
-import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
-import { SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from 'src/app.module';
+import { validationConfig } from 'src/config/validation.config'
+import { SwaggerConfig } from 'src/config/swagger.config'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { NestFactory } from '@nestjs/core'
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import { AppModule } from 'src/app.module'
+import { LoggerInterceptor } from 'src/logger/logger.interceptor'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const configService = app.get<ConfigService>(ConfigService);
+  const app: INestApplication = await NestFactory.create(AppModule)
+  const config: ConfigService = app.get<ConfigService>(ConfigService)
 
-  app.useGlobalPipes(new ValidationPipe(validationConfig));
-  
-  const document = SwaggerModule.createDocument(app, SwaggerConfig);
-  SwaggerModule.setup(configService.get('SWAGGER_PATH'), app, document);
+  const swaggerPath: string = config.get<string>('SWAGGER_PATH')
+  const port: string = config.get<string>('SERVER_PORT')
+  const document: OpenAPIObject = SwaggerModule.createDocument(app, SwaggerConfig)
 
-  await app.listen(configService.get('SERVER_PORT'));
+  app.useGlobalPipes(new ValidationPipe(validationConfig))
+  app.useGlobalInterceptors(new LoggerInterceptor())
+
+  SwaggerModule.setup(swaggerPath, app, document)
+
+  await app.listen(port)
 }
-bootstrap();
+
+bootstrap()

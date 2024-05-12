@@ -1,36 +1,32 @@
-import { Entity, Column, OneToMany, PrimaryColumn, Generated } from "typeorm";
-import { Answer } from "src/entities/answer.entity";
-import { QUESTION_TYPE } from "src/constants/mbti.constant";
-import { BaseTimeEntity } from "src/entities/base-time.entity";
+import { Entity, Column, OneToMany } from 'typeorm'
+import { Answer } from 'src/entities/answer.entity'
+import { QUESTION_TYPE } from 'src/constants/mbti.constant'
+import { ExtendedBaseTimeEntity } from '@exnest/extended-nest'
 
 @Entity('question')
-export class Question extends BaseTimeEntity{
+export class Question extends ExtendedBaseTimeEntity {
   @Column({
-    type: "varchar",
+    type: 'varchar',
     length: 512,
-    unique: true
+    unique: true,
   })
-  contents: string;
+  contents: string
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     length: 32,
   })
-  questionType: QUESTION_TYPE;
+  questionType: QUESTION_TYPE
 
   @Column({
-    type: "boolean",
+    type: 'boolean',
     default: true,
-    nullable: false
+    nullable: false,
   })
-  isActivate: boolean;
+  isActivate: boolean
 
-  @OneToMany(
-    "Answer",
-    "question",
-    {
-      nullable: true
-    }
-  )
-  answers: Answer[];
+  @OneToMany('Answer', 'question', {
+    nullable: true,
+  })
+  answers: Answer[]
 }
