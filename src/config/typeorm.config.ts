@@ -1,5 +1,5 @@
-import { ConfigService } from '@nestjs/config';
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { ConfigService } from '@nestjs/config'
+import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 export const typeORMConfig = async (config: ConfigService): Promise<TypeOrmModuleOptions> => {
   return {
@@ -9,11 +9,14 @@ export const typeORMConfig = async (config: ConfigService): Promise<TypeOrmModul
     username: config.get<string>('DATABASE_USERNAME'),
     password: config.get<string>('DATABASE_PASSWORD'),
     database: config.get<string>('DATABASE_DATABASE'),
-    entities: ['dist/src/entities/*.js'],
-    synchronize : false,
+    entities: ['dist/**/*.entity.js'],
+    synchronize: false,
+    logging: 'all',
+    poolSize: 5,
+    logNotifications: true,
     keepConnectionAlive: true,
   }
-};
+}
 
 export const testTypeORMConfig = async (config: ConfigService): Promise<TypeOrmModuleOptions> => {
   return {
@@ -25,6 +28,6 @@ export const testTypeORMConfig = async (config: ConfigService): Promise<TypeOrmM
     database: config.get<string>('TEST_DATABASE_DATABASE'),
     entities: ['dist/src/entities/*.js'],
     logging: true,
-    synchronize : true
+    synchronize: true,
   }
-};
+}
