@@ -39,6 +39,7 @@
     "@nestjs/typeorm": "^9.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "joi": "^17.13.1",
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -76,7 +77,7 @@
       "eslint --fix",
       "prettier --write"
     ]
- },
+  },
   "jest": {
     "moduleFileExtensions": [
       "js",
