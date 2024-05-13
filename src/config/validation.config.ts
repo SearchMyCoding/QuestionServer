@@ -1,10 +1,10 @@
-import { ValidationPipeOptions } from "@nestjs/common";
+import { ValidationPipeOptions } from '@nestjs/common';
 
-export const validationConfig : ValidationPipeOptions = {
-    whitelist : true,
-    forbidNonWhitelisted : true,
-    transform : true,
-    transformOptions: {
-        enableImplicitConversion: true
-    }
-}
+export const validationConfig: ValidationPipeOptions = {
+  whitelist: true,
+  forbidNonWhitelisted: true,
+  transform: true,
+  transformOptions: {
+    enableImplicitConversion: true,
+  },
+};
