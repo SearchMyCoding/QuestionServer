@@ -1,12 +1,9 @@
 import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Answer } from 'src/entities/answer.entity';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import {
+  DataSource,
   DeleteResult,
   FindManyOptions,
   FindOptionsWhere,
@@ -24,26 +21,19 @@ export class AnswerService extends createBaseCrudService(Answer) {
   constructor(
     @InjectRepository(Answer)
     readonly repository: Repository<Answer>,
+    private readonly datasource: DataSource,
   ) {
     super(repository);
   }
-  override async read(
-    targetOption?: FindManyOptions<Answer>,
-    transaction = true,
-  ): Promise<Answer[]> {
+  override async read(targetOption?: FindManyOptions<Answer>, transaction = true): Promise<Answer[]> {
     return super.read(targetOption, transaction);
   }
 
-  override async create(
-    createDto: CreateAnswerDto | CreateAnswerDto[],
-  ): Promise<InsertResult> {
+  override async create(createDto: CreateAnswerDto | CreateAnswerDto[]): Promise<InsertResult> {
     const isArray: boolean = Array.isArray(createDto);
-    const length: number = isArray
-      ? (createDto as CreateAnswerDto[]).length
-      : 1;
+    const length: number = isArray ? (createDto as CreateAnswerDto[]).length : 1;
 
-    const queryRunner: QueryRunner =
-      this.repository.manager.connection.createQueryRunner();
+    const queryRunner: QueryRunner = this.datasource.createQueryRunner();
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -51,33 +41,24 @@ export class AnswerService extends createBaseCrudService(Answer) {
       const answers: Answer[] = await Promise.all(
         Array.from({ length }, async (_, index: number) => {
           const answer: Answer = this.repository.create(
-            isArray
-              ? (createDto as CreateAnswerDto[])[index]
-              : (createDto as CreateAnswerDto),
+            isArray ? (createDto as CreateAnswerDto[])[index] : (createDto as CreateAnswerDto),
           );
 
-          const question: Question = await queryRunner.manager.findOne(
-            Question,
-            {
-              where: {
-                id: answer.question.id,
-              },
+          const question: Question = await queryRunner.manager.findOne(Question, {
+            where: {
+              id: answer.question.id,
             },
-          );
+          });
 
           if (!question) {
-            throw new NotFoundException(
-              `Fail to find ${Question.name} with ID ${question.id}`,
-            );
+            throw new NotFoundException(`Fail to find ${Question.name} with ID ${question.id}`);
           }
 
           return answer;
         }),
       );
 
-      const result: InsertResult = await queryRunner.manager
-        .withRepository(this.repository)
-        .insert(answers);
+      const result: InsertResult = await queryRunner.manager.insert(Answer, answers);
 
       await queryRunner.commitTransaction();
       return result;
@@ -89,12 +70,8 @@ export class AnswerService extends createBaseCrudService(Answer) {
     }
   }
 
-  override async update(
-    targetOption: FindOptionsWhere<Answer>,
-    updateDto: UpdateAnswerDto,
-  ): Promise<UpdateResult> {
-    const queryRunner: QueryRunner =
-      this.repository.manager.connection.createQueryRunner();
+  override async update(targetOption: FindOptionsWhere<Answer>, updateDto: UpdateAnswerDto): Promise<UpdateResult> {
+    const queryRunner: QueryRunner = this.repository.manager.connection.createQueryRunner();
 
     try {
       await queryRunner.connect();
@@ -108,14 +85,10 @@ export class AnswerService extends createBaseCrudService(Answer) {
       );
 
       if (answers.length === 0) {
-        throw new NotFoundException(
-          `Fail to find ${Answer.name} with Option ${targetOption}`,
-        );
+        throw new NotFoundException(`Fail to find ${Answer.name} with Option ${targetOption}`);
       }
 
-      const result: UpdateResult = await queryRunner.manager
-        .withRepository(this.repository)
-        .update(targetOption, updateDto);
+      const result: UpdateResult = await queryRunner.manager.update(Answer, targetOption, updateDto);
 
       await queryRunner.commitTransaction();
       return;
@@ -127,19 +100,14 @@ export class AnswerService extends createBaseCrudService(Answer) {
     }
   }
 
-  async softDelete(
-    targetOption: FindOptionsWhere<Answer>,
-  ): Promise<UpdateResult> {
-    const queryRunner: QueryRunner =
-      this.repository.manager.connection.createQueryRunner();
+  async softDelete(targetOption: FindOptionsWhere<Answer>): Promise<UpdateResult> {
+    const queryRunner: QueryRunner = this.repository.manager.connection.createQueryRunner();
 
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      const result: UpdateResult = await queryRunner.manager
-        .withRepository(this.repository)
-        .softDelete(targetOption);
+      const result: UpdateResult = await queryRunner.manager.softDelete(Answer, targetOption);
 
       await queryRunner.commitTransaction();
       return result;
@@ -152,16 +120,13 @@ export class AnswerService extends createBaseCrudService(Answer) {
   }
 
   async delete(targetOption: FindOptionsWhere<Answer>): Promise<DeleteResult> {
-    const queryRunner: QueryRunner =
-      this.repository.manager.connection.createQueryRunner();
+    const queryRunner: QueryRunner = this.repository.manager.connection.createQueryRunner();
 
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      const result: DeleteResult = await queryRunner.manager
-        .withRepository(this.repository)
-        .delete(targetOption);
+      const result: DeleteResult = await queryRunner.manager.delete(Answer, targetOption);
 
       await queryRunner.commitTransaction();
       return;
