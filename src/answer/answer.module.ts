@@ -1,4 +1,4 @@
-import { Answer } from 'src/entities/answer.entity';
+import { Answer } from 'src/answer/answer.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { AnswerController } from 'src/answer/answer.controller';

@@ -1,6 +1,6 @@
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
-import { Answer } from 'src/entities/answer.entity';
+import { Answer } from 'src/answer/answer.entity';
 import { AnswerService } from 'src/answer/answer.service';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
 import { Post, Body, Get, Param, Patch, Delete, ParseUUIDPipe } from '@nestjs/common';

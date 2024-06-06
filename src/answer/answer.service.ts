@@ -1,9 +1,8 @@
 import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
-import { Answer } from 'src/entities/answer.entity';
+import { Answer } from 'src/answer/answer.entity';
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import {
-  DataSource,
   DeleteResult,
   FindManyOptions,
   FindOptionsWhere,
@@ -21,7 +20,6 @@ export class AnswerService extends createBaseCrudService(Answer) {
   constructor(
     @InjectRepository(Answer)
     readonly repository: Repository<Answer>,
-    private readonly datasource: DataSource,
   ) {
     super(repository);
   }
@@ -33,7 +31,7 @@ export class AnswerService extends createBaseCrudService(Answer) {
     const isArray: boolean = Array.isArray(createDto);
     const length: number = isArray ? (createDto as CreateAnswerDto[]).length : 1;
 
-    const queryRunner: QueryRunner = this.datasource.createQueryRunner();
+    const queryRunner: QueryRunner = this.repository.manager.connection.createQueryRunner();
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
