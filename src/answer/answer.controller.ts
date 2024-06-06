@@ -1,9 +1,9 @@
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UpdateAnswerDto } from 'src/dto/UpdateAnswer.dto';
-import { Answer } from 'src/entities/answer.entity';
+import { Answer } from 'src/answer/answer.entity';
 import { AnswerService } from 'src/answer/answer.service';
 import { CreateAnswerDto } from 'src/dto/CreateAnswer.dto';
-import { Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
+import { Post, Body, Get, Param, Patch, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { UUID } from 'crypto';
 import { ExtendedController } from '@exnest/extended-nest';
 import { FindManyOptions, FindOptionsWhere } from 'typeorm';
@@ -24,10 +24,6 @@ export class AnswerController {
     summary: '답변 조회하는 요청',
     description: '답변 배열 형태로 반환한다.',
   })
-  @ApiQuery({
-    name: 'questionId',
-    required: false,
-  })
   async getAnswers(): Promise<Answer[]> {
     return await this.answerService.read();
   }
@@ -46,7 +42,11 @@ export class AnswerController {
     summary: 'id를 이용한 답변 조회하는 요청',
     description: 'id를 이용하여 답변을 조회한다.',
   })
-  async getOneAnswer(@Param('id') answerId: UUID): Promise<Answer> {
+  @ApiQuery({
+    name: 'answerId',
+    required: false,
+  })
+  async getOneAnswer(@Param('id', ParseUUIDPipe) answerId: UUID): Promise<Answer> {
     const targetOption: FindManyOptions<Answer> = {
       where: {
         id: answerId,
@@ -59,13 +59,13 @@ export class AnswerController {
   @Patch(':id')
   @ApiOperation({
     summary: 'id를 이용하여 답변의 일부를 수정하는 요청',
-    description:
-      'id가 존재하여야 하며 body를 UpdateAnswerDto에 맞춰 요청해야 변경된다.',
+    description: 'id가 존재하여야 하며 body를 UpdateAnswerDto에 맞춰 요청해야 변경된다.',
   })
-  async patchAnswer(
-    @Param('id') answerId: UUID,
-    @Body() updateAnswerDto: UpdateAnswerDto,
-  ) {
+  @ApiQuery({
+    name: 'answerId',
+    required: false,
+  })
+  async patchAnswer(@Param('id', ParseUUIDPipe) answerId: UUID, @Body() updateAnswerDto: UpdateAnswerDto) {
     const targetOption: FindOptionsWhere<Answer> = {
       id: answerId,
     };
@@ -75,10 +75,13 @@ export class AnswerController {
   @Delete(':id')
   @ApiOperation({
     summary: 'id를 이용하여 답변을 삭제하는 요청',
-    description:
-      '먼저 softDelete된다. 이후 시간이 지나면 retention policy에 의하여 보관되다가 삭제된다.',
+    description: '먼저 softDelete된다. 이후 시간이 지나면 retention policy에 의하여 보관되다가 삭제된다.',
   })
-  async deleteAnswer(@Param('id') answerId: UUID) {
+  @ApiQuery({
+    name: 'answerId',
+    required: false,
+  })
+  async deleteAnswer(@Param('id', ParseUUIDPipe) answerId: UUID) {
     const targetOption: FindOptionsWhere<Answer> = {
       id: answerId,
     };
