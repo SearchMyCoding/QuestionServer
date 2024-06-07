@@ -12,5 +12,5 @@ export default new DataSource({
   password: config.get<string>('DATABASE_PASSWORD'),
   database: config.get<string>('DATABASE_DATABASE'),
   synchronize: false,
-  migrations: ['src/database/migrations/*.ts'],
+  migrations: ['dist/database/migrations/*.js'],
 });

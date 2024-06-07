@@ -28,7 +28,11 @@ export const testTypeORMConfig = async (config: ConfigService): Promise<TypeOrmM
     password: config.get<string>('TEST_DATABASE_PASSWORD'),
     database: config.get<string>('TEST_DATABASE_DATABASE'),
     entities: ['dist/src/entities/*.js'],
+    subscribers: ['dist/**/*Subscriber.js'],
     logging: true,
-    synchronize: true,
+    synchronize: false,
+    poolSize: 5,
+    logNotifications: true,
+    keepConnectionAlive: true,
   };
 };
