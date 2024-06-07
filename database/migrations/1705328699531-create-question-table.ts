@@ -1,15 +1,10 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateAnswer1712460812932 implements MigrationInterface {
+export class createQuestionTable1705328699531 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'answers',
+        name: 'question',
         columns: [
           {
             name: 'id',
@@ -17,7 +12,6 @@ export class CreateAnswer1712460812932 implements MigrationInterface {
             isPrimary: true,
             isGenerated: false,
             isNullable: false,
-            generationStrategy: 'uuid',
           },
           {
             name: 'sequence',
@@ -45,36 +39,23 @@ export class CreateAnswer1712460812932 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'answerType',
+            name: 'questionType',
             type: 'varchar',
             isNullable: false,
+            length: '20',
           },
           {
-            name: 'questionId',
-            type: 'uuid',
+            name: 'isActivate',
+            type: 'boolean',
             isNullable: false,
+            default: true,
           },
         ],
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'answer',
-      new TableForeignKey({
-        columnNames: ['questionId'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'question',
-        onDelete: 'CASCADE',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const answers = await queryRunner.getTable('answer');
-    const foreignKey = answers.foreignKeys.find(
-      (fk) => fk.columnNames.indexOf('questionId') !== -1,
-    );
-    await queryRunner.dropForeignKey('answer', foreignKey);
-    await queryRunner.dropTable('answer');
+    await queryRunner.dropTable('question');
   }
 }
