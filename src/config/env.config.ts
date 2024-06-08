@@ -1,21 +1,21 @@
 import { ConfigModuleOptions } from '@nestjs/config';
-import { number, object, string } from 'joi';
+import Joi from 'joi';
 
-const validationSchema = object({
-  DATABASE_HOST: string().required(),
-  DATABASE_PORT: number().required(),
-  DATABASE_USERNAME: string().required(),
-  DATABASE_PASSWORD: string().required(),
-  DATABASE_DATABASE: string().required(),
-  SERVER_PORT: number().default(3000),
-  SWAGGER_PATH: string().default('api'),
-  SALT: string().required(),
-  HASH_ALGORITHM: string().required(),
-  TEST_DATABASE_HOST: string().default('localhost'),
-  TEST_DATABASE_PORT: number().default(5432),
-  TEST_DATABASE_USERNAME: string().default('postgres'),
-  TEST_DATABASE_PASSWORD: number().default(1234),
-  TEST_DATABASE_DATABASE: string().default('test'),
+const validationSchema = Joi.object({
+  DATABASE_HOST: Joi.string().required(),
+  DATABASE_PORT: Joi.number().required(),
+  DATABASE_USERNAME: Joi.string().required(),
+  DATABASE_PASSWORD: Joi.string().required(),
+  DATABASE_DATABASE: Joi.string().required(),
+  SERVER_PORT: Joi.number().default(3000),
+  SWAGGER_PATH: Joi.string().default('api'),
+  SALT: Joi.string().required(),
+  HASH_ALGORITHM: Joi.string().required(),
+  TEST_DATABASE_HOST: Joi.string().default('localhost'),
+  TEST_DATABASE_PORT: Joi.number().default(5432),
+  TEST_DATABASE_USERNAME: Joi.string().default('postgres'),
+  TEST_DATABASE_PASSWORD: Joi.number().default(1234),
+  TEST_DATABASE_DATABASE: Joi.string().default('test'),
 })
   .unknown()
   .required();
