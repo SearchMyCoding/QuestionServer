@@ -5,6 +5,8 @@ import { typeORMConfig } from 'src/config/typeorm.config';
 import { QuestionModule } from 'src/question/question.module';
 import { AnswerModule } from 'src/answer/answer.module';
 import { envConfig } from 'src/config/env.config';
+import { AppController } from 'src/app.controller';
+import { AppService } from 'src/app.service';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { envConfig } from 'src/config/env.config';
     QuestionModule,
     AnswerModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
